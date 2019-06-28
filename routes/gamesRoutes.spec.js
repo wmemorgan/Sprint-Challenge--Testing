@@ -23,6 +23,18 @@ describe(`Games endpoint testing`, () => {
       const res = await request(server).get('/games')
       expect(Array.isArray(res.body)).toBeTruthy()
     })
+
+    it('/games/:id should return game by ID', async () => {
+      let id = 2
+      const res = await request(server).get(`/games/${id}`)
+      expect(res.body).toEqual(db[id-1])
+    })
+
+    it(`return error when a game is not in the list`, async () => {
+      let id = 45343
+      const res = await request(server).get(`/games/${id}`)
+      expect(res.status).toBe(404)
+    })
   })
 
   describe(`POST /games`, () => {
@@ -71,6 +83,22 @@ describe(`Games endpoint testing`, () => {
 
       expect(duplicateRes.status).toBe(405)
 
+    })
+  })
+
+  describe(`DELETE /games/:id`, () => {
+    it('confirm successful deletion', async () => {
+      const id = 2
+      const res = await request(server).delete(`/games/${id}`)
+      expect(res.status).toBe(200)
+      expect(res.body).toEqual({ message: `Successfully deleted record number ${id}`})
+    })
+
+    it(`return error when a game is not in the list`, async () => {
+      const id = 2
+      await request(server).delete(`/games/${id}`)
+      const res = await request(server).delete(`/games/${id}`)
+      expect(res.status).toBe(404)
     })
   })
 })

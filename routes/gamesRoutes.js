@@ -1,13 +1,29 @@
 const router = require('express').Router()
 
 // Import data models
-const db = require('../data/testData')
+let db = require('../data/testData')
 
 //==== GET =====//
 router.get('/', async (req, res) => {
   try {
     const data = db
     res.send(data)
+  }
+  catch (err) {
+    res.status(500).send(err.message)
+  }
+})
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const data = db[id-1]
+    if (data) {
+      res.send(data)
+    } else {
+      res.status(404).json({ message: `record not found` })
+    }
+
   }
   catch (err) {
     res.status(500).send(err.message)
@@ -37,6 +53,20 @@ router.post('/', requiredData(inputDataChecker, requiredFields), async (req, res
   catch (err) {
     res.status(500).send(err.message)
   }
+})
+
+//==== DELETE ====//
+router.delete('/:id', (req, res) => {
+  const { id } = req.params
+  const foundGame = db.find(game => game.id == id)
+
+  if(foundGame) {
+    db = db.filter(game => game.id !== Number(id))
+    res.json({ message: `Successfully deleted record number ${id}` })
+  } else {
+    res.status(404).json({ message: `record not found` })
+  }
+
 })
 
 // Custom Middleware
