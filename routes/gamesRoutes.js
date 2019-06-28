@@ -18,14 +18,21 @@ router.get('/', async (req, res) => {
 const requiredFields = ['title', 'genre']
 router.post('/', requiredData(inputDataChecker, requiredFields), async (req, res) => {
   try {
+    const titles = db.map(game => game.title.toLowerCase())
     const id = db.length + 1
     const newData = {
       id,
       ...req.body
     }
+    const isDuplicate = titles.includes(newData.title.toLowerCase())
 
-    const data = [...db, newData][id-1]
-    res.status(201).send(data)
+    if (isDuplicate) {
+      res.status(405).json({ message: `Duplicate title exists` })
+    } else {
+      db.push(newData)
+      const data = db[id - 1]
+      res.status(201).send(data)
+    }
   }
   catch (err) {
     res.status(500).send(err.message)

@@ -44,13 +44,33 @@ describe(`Games endpoint testing`, () => {
 
     it('will receive the newly created game info', async () => {
       const newData = {
+        title: 'Punch Out',
+        genre: 'Sports',
+        releaseYear: 1985
+      }
+
+      const res = await request(server).post('/games').send(newData)
+      expect(res.body.releaseYear).toBe(newData.releaseYear)
+    })
+
+    it('cannot have duplicate game titles', async () => {
+      const newTitle = {
         title: 'NBA 2K',
         genre: 'Sports',
         releaseYear: 1999
       }
 
-      const res = await request(server).post('/games').send(newData)
-      expect(res.body.releaseYear).toBe(newData.releaseYear)
+      const duplicateTitle = {
+        title: 'NBA 2K',
+        genre: 'Sports',
+        releaseYear: 1999
+      }
+
+      await request(server).post('/games').send(newTitle)
+      const duplicateRes = await request(server).post('/games').send(duplicateTitle)
+
+      expect(duplicateRes.status).toBe(405)
+
     })
   })
 })
