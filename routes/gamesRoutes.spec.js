@@ -25,11 +25,32 @@ describe(`Games endpoint testing`, () => {
     })
   })
 
-  xdescribe(`POST /games`, () => {
+  describe(`POST /games`, () => {
     it('confirm required data is received', async () => {
-      const testData = { title: 'Legend of Zelda' }
-      const res = await request(server).post('/games').send(testData)
+      const newData = { title: 'Legend of Zelda' }
+      const res = await request(server).post('/games').send(newData)
       expect(res.status).toBe(422)
+    })
+
+    it('will receive status code that record was created', async () => {
+      const newData = {
+        title: 'NBA 2K',
+        genre: 'Sports',
+        releaseYear: 1999
+      }
+      const res = await request(server).post('/games').send(newData)
+      expect(res.status).toBe(201)
+    })
+
+    it('will receive the newly created game info', async () => {
+      const newData = {
+        title: 'NBA 2K',
+        genre: 'Sports',
+        releaseYear: 1999
+      }
+
+      const res = await request(server).post('/games').send(newData)
+      expect(res.body.releaseYear).toBe(newData.releaseYear)
     })
   })
 })
