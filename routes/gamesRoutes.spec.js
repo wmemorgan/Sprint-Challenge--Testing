@@ -20,13 +20,16 @@ describe(`Games endpoint testing`, () => {
     })
 
     it('confirm list of games is an array', async () => {
-      const expected = []
       const res = await request(server).get('/games')
-      expect.arrayContaining(expected)
+      expect(Array.isArray(res.body)).toBeTruthy()
     })
   })
 
-  describe(`POST /games`, () => {
-
+  xdescribe(`POST /games`, () => {
+    it('confirm required data is received', async () => {
+      const testData = { title: 'Legend of Zelda' }
+      const res = await request(server).post('/games').send(testData)
+      expect(res.status).toBe(422)
+    })
   })
 })
