@@ -9,6 +9,10 @@ const gamesRoutes = require('../routes/gamesRoutes')
 const server = express()
 
 // Load middleware
+server.use(helmet())
+server.use(cors())
+server.use(express.json())
+
 
 // Route handling
 server.use('/games', gamesRoutes)
